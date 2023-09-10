@@ -7,12 +7,10 @@ function DBProvider({ children }) {
   const [db, setDb] = useState(SQLite.openDatabase("example.db"));
   const [plants, setPlants] = useState([]);
 
-  const [currentID, setCurrentID] = React.useState(0);
-
   useEffect(() => {
     db.transaction((tx) => {
       tx.executeSql(
-        "CREATE TABLE IF NOT EXISTS plants (id INTEGER PRIMARY KEY, name TEXT, species TEXT, days INTEGER)"
+        "CREATE TABLE IF NOT EXISTS plants (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, species TEXT, days INTEGER)",
       );
     });
 
@@ -21,7 +19,7 @@ function DBProvider({ children }) {
         "SELECT * FROM plants",
         null,
         (txObj, resultSet) => setPlants(resultSet.rows._array),
-        (txObj, error) => console.log(error)
+        (txObj, error) => console.log(error),
       );
     });
   }, [db]);
@@ -29,36 +27,35 @@ function DBProvider({ children }) {
   const addPlant = React.useCallback(
     (name, species, days) => {
       db.transaction((tx) => {
-        setCurrentID(currentID + 1);
         tx.executeSql(
-          "INSERT INTO plants (id, name, species, days) values (?, ?, ?, ?)",
-          [currentID, name, species, days],
+          "INSERT INTO plants (name, species, days) values (?, ?, ?)",
+          [name, species, days],
           (txObj, resultSet) => {
-            let existingNames = [...names];
-            existingNames.push({ id: resultSet.insertId, name: currentName });
-            setNames(existingNames);
-            setCurrentName(undefined);
+            let existingPlants = [...plants];
+            existingPlants.push({ id: resultSet.insertId, name });
+            setPlants(existingPlants);
           },
-          (txObj, error) => console.log(error)
+          (txObj, error) => console.log(error),
         );
       });
-      return currentID;
     },
-    [currentID, setCurrentID]
+    [currentID, setCurrentID],
   );
 
   const deletePlant = React.useCallback((id) => {
     db.transaction((tx) => {
       tx.executeSql(
-        "DELETE FROM names WHERE id = ?",
+        "DELETE FROM plants WHERE id = ?",
         [id],
         (txObj, resultSet) => {
           if (resultSet.rowsAffected > 0) {
-            let existingNames = [...names].filter((name) => name.id !== id);
-            setNames(existingNames);
+            let existingPlants = [...plants].filter(
+              (plants) => plant.id !== id,
+            );
+            setPlants(existingPlants);
           }
         },
-        (txObj, error) => console.log(error)
+        (txObj, error) => console.log(error),
       );
     });
   }, []);
