@@ -6,22 +6,30 @@ import { AddPlant } from "./AddPlant";
 import { Plant } from "./Plant";
 import { DBProvider } from "./DbProvider";
 
-const Stack = createNativeStackNavigator();
+type RootStackParamList = {
+  Yourplants: undefined;
+  AddPlant: undefined;
+  Plant: undefined;
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function App() {
   return (
     <DBProvider>
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen name="Yourplants" options={{ title: "Your plants" }}>
-            {(props) => <PlantList {...props} />}
-          </Stack.Screen>
-          <Stack.Screen name="AddPlant" options={{ title: "Add a new plant" }}>
-            {(props) => <AddPlant {...props} />}
-          </Stack.Screen>
-          <Stack.Screen name="Plant">
-            {(props) => <Plant {...props} />}
-          </Stack.Screen>
+          <Stack.Screen
+            name="Yourplants"
+            options={{ title: "Your plants" }}
+            component={PlantList}
+          />
+          <Stack.Screen
+            name="AddPlant"
+            options={{ title: "Add a new plant" }}
+            component={AddPlant}
+          />
+          <Stack.Screen name="Plant" component={Plant} />
         </Stack.Navigator>
       </NavigationContainer>
     </DBProvider>

@@ -8,15 +8,21 @@ import {
 } from "react-native";
 import * as React from "react";
 
-import { DBContext } from "./DbProvider.js";
+import { BasePlantInfo, DBContext } from "./DbProvider";
 
-const defaultPlant = { name: "", species: "", days: 7 };
+type NewPlantInfo = {
+  name: string;
+  species: string;
+  days: number | null;
+};
 
-function AddPlant({ navigation }) {
+const defaultPlant: NewPlantInfo = { name: "", species: "", days: 7 };
+
+function AddPlant({ navigation, route }) {
   const dbContext = React.useContext(DBContext);
   const { addPlant } = dbContext;
 
-  const [plant, setPlant] = React.useState(defaultPlant);
+  const [plant, setPlant] = React.useState<NewPlantInfo>(defaultPlant);
 
   const onChangeNameInputText = React.useCallback(
     (text) => {
@@ -60,6 +66,8 @@ function AddPlant({ navigation }) {
   const onCancel = React.useCallback(() => navigation.goBack(), [navigation]);
 
   const onSave = React.useCallback(() => {
+    let newDays = 1;
+
     if (plant.days === null || plant.name === null || plant.name === "") {
       Alert.alert(
         "Missing data",
@@ -72,11 +80,16 @@ function AddPlant({ navigation }) {
         ],
       );
       return;
+    } else {
+      newDays = plant.days;
     }
     if (plant.species === null || plant.species === "") {
       plant.species = "--";
     }
-    addPlant(plant);
+    addPlant({
+      ...plant,
+      days: newDays,
+    });
     setPlant(defaultPlant);
     navigation.goBack();
   }, [navigation, plant, addPlant, setPlant]);
@@ -148,7 +161,7 @@ const styles = StyleSheet.create({
   buttonLabel: {
     color: "#fff",
     fontSize: 18,
-    fontWeight: 600,
+    fontWeight: "600",
   },
   buttons: {
     flexDirection: "row",

@@ -1,9 +1,9 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import * as React from "react";
 
-import { DBContext } from "./DbProvider.js";
+import { DBContext } from "./DbProvider";
 
-function PlantList({ navigation }) {
+function PlantList({ navigation, route }) {
   const dbContext = React.useContext(DBContext);
   const { plants } = dbContext;
 
@@ -17,7 +17,7 @@ function PlantList({ navigation }) {
   );
 
   const plantItems = plants.map((item, i) => (
-    <PlantItem data={item} key={i} onItemPress={onItemPress} />
+    <PlantItem data={item} onItemPress={onItemPress} key={i} />
   ));
 
   const onPressAddPlant = React.useCallback(() => {
@@ -51,7 +51,13 @@ function PlantItem({ data, onItemPress }) {
   );
 }
 
-function Cell({ text, labelStyle }) {
+type CellProps = {
+  text: string;
+  labelStyle?: any;
+};
+
+function Cell(props: CellProps) {
+  const { text, labelStyle } = props;
   const labelStyleResolved = labelStyle ?? styles.label;
   return (
     <View style={styles.cell}>
@@ -82,11 +88,10 @@ const styles = StyleSheet.create({
   buttonLabel: {
     color: "#fff",
     fontSize: 18,
-    fontWeight: 600,
+    fontWeight: "600",
   },
 
   row: {
-    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "space-evenly",
     flexDirection: "row",

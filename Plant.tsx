@@ -2,7 +2,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import * as React from "react";
 import { Modal, Alert } from "react-native";
 
-import { DBContext } from "./DbProvider.js";
+import { DBContext } from "./DbProvider";
 
 function Plant({ navigation, route }) {
   const dbContext = React.useContext(DBContext);
@@ -15,11 +15,18 @@ function Plant({ navigation, route }) {
   }, [removePlant, navigation, plant]);
 
   const onPressDelete = React.useCallback(() => {
-    Alert.alert("R u sure?", `U sure u wanna delete ${plant.name}?`, [
-      { text: "NO", style: "cancel" },
-      { text: "YES", onPress: deletePlant },
-    ]);
-  });
+    Alert.alert(
+      "R u sure?",
+      `U sure u wanna delete ${plant.name}?`,
+      [
+        { text: "NO", style: "cancel" },
+        { text: "YES", onPress: deletePlant },
+      ],
+      {
+        cancelable: true,
+      },
+    );
+  }, []);
 
   return (
     <View style={styles.container}>

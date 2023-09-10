@@ -1,28 +1,60 @@
 import * as React from "react";
 import * as SQLite from "expo-sqlite";
 
-const DBContext = React.createContext();
+export type BasePlantInfo = {
+  name: string;
+  species: string;
+  days: number;
+};
 
-function DBProvider({ children }) {
+type PlantInfo = BasePlantInfo & {
+  id: number;
+};
+
+type DBContextType = {
+  plants: PlantInfo[];
+  addPlant: (plant: BasePlantInfo) => void;
+  deletePlant: (id: number) => void;
+};
+
+const defaultContext: DBContextType = {
+  plants: [],
+  addPlant: () => {},
+  deletePlant: () => {},
+};
+
+const DBContext = React.createContext(defaultContext);
+
+type Props = {
+  children?: React.ReactNode;
+};
+
+function DBProvider({ children }: Props) {
   const [db, setDb] = React.useState(SQLite.openDatabase("example.db"));
-  const [plants, setPlants] = React.useState([]);
+  const [plants, setPlants] = React.useState<PlantInfo[]>([]);
 
   React.useEffect(() => {
     db.transaction((tx) => {
       tx.executeSql(
         "CREATE TABLE IF NOT EXISTS plants (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, species TEXT, days INTEGER)",
-        null,
+        undefined,
         () => console.log("success!"),
-        (txObj, error) => console.log(error),
+        (txObj, error) => {
+          console.log(error);
+          return true;
+        },
       );
     });
 
     db.transaction((tx) => {
       tx.executeSql(
         "SELECT * FROM plants",
-        null,
+        undefined,
         (txObj, resultSet) => setPlants(resultSet.rows._array),
-        (txObj, error) => console.log(error),
+        (txObj, error) => {
+          console.log(error);
+          return true;
+        },
       );
     });
   }, [db]);
@@ -35,15 +67,20 @@ function DBProvider({ children }) {
           [name, species, days],
           (txObj, resultSet) => {
             let existingPlants = [...plants];
-            existingPlants.push({
-              id: resultSet.insertId,
-              name,
-              species,
-              days,
-            });
-            setPlants(existingPlants);
+            if (resultSet.insertId) {
+              existingPlants.push({
+                id: resultSet.insertId,
+                name,
+                species,
+                days,
+              });
+              setPlants(existingPlants);
+            }
           },
-          (txObj, error) => console.log(error),
+          (txObj, error) => {
+            console.log(error);
+            return true;
+          },
         );
       });
     },
@@ -58,13 +95,14 @@ function DBProvider({ children }) {
           [id],
           (txObj, resultSet) => {
             if (resultSet.rowsAffected > 0) {
-              let existingPlants = [...plants].filter(
-                (plant) => plant.id !== id,
-              );
+              let existingPlants = plants.filter((plant) => plant.id !== id);
               setPlants(existingPlants);
             }
           },
-          (txObj, error) => console.log(error),
+          (txObj, error) => {
+            console.log(error);
+            return true;
+          },
         );
       });
     },
