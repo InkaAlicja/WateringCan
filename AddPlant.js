@@ -8,9 +8,14 @@ import {
 } from "react-native";
 import * as React from "react";
 
-const defaultPlant = { name: "", species: "", time: 7 };
+import { DBContext } from "./DbProvider.js";
 
-function AddPlant({ navigation, addPlant }) {
+const defaultPlant = { name: "", species: "", days: 7 };
+
+function AddPlant({ navigation }) {
+  const dbContext = React.useContext(DBContext);
+  const { addPlant } = dbContext;
+
   const [plant, setPlant] = React.useState(defaultPlant);
 
   const onChangeNameInputText = React.useCallback(
@@ -18,7 +23,7 @@ function AddPlant({ navigation, addPlant }) {
       setPlant((plant) => ({
         name: text,
         species: plant.species,
-        time: plant.time,
+        days: plant.days,
       }));
     },
     [setPlant],
@@ -29,7 +34,7 @@ function AddPlant({ navigation, addPlant }) {
       setPlant((plant) => ({
         name: plant.name,
         species: text,
-        time: plant.time,
+        days: plant.days,
       }));
     },
     [setPlant],
@@ -46,7 +51,7 @@ function AddPlant({ navigation, addPlant }) {
       setPlant((plant) => ({
         name: plant.name,
         species: plant.species,
-        time: days,
+        days: days,
       }));
     },
     [setPlant],
@@ -55,7 +60,7 @@ function AddPlant({ navigation, addPlant }) {
   const onCancel = React.useCallback(() => navigation.goBack(), [navigation]);
 
   const onSave = React.useCallback(() => {
-    if (plant.time === null || plant.name === null || plant.name === "") {
+    if (plant.days === null || plant.name === null || plant.name === "") {
       Alert.alert(
         "Missing data",
         "The plant needs a name and the num of days between watering needs to be specified",
@@ -96,7 +101,7 @@ function AddPlant({ navigation, addPlant }) {
           <TextInput
             placeholder="days"
             style={styles.input}
-            value={plant.time?.toString()}
+            value={plant.days?.toString()}
             onChangeText={onChangeDaysInputText}
           />
           <Text>days</Text>

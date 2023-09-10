@@ -1,7 +1,12 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import * as React from "react";
 
-function PlantList({ navigation, plants }) {
+import { DBContext } from "./DbProvider.js";
+
+function PlantList({ navigation }) {
+  const dbContext = React.useContext(DBContext);
+  const { plants } = dbContext;
+
   const onItemPress = React.useCallback(
     (plant) => {
       navigation.navigate("Plant", {
@@ -15,7 +20,7 @@ function PlantList({ navigation, plants }) {
     <PlantItem data={item} key={i} onItemPress={onItemPress} />
   ));
 
-  const onPressAddPLant = React.useCallback(() => {
+  const onPressAddPlant = React.useCallback(() => {
     navigation.navigate("AddPlant");
   }, [navigation]);
 
@@ -27,7 +32,7 @@ function PlantList({ navigation, plants }) {
         <Cell text="Water every:" />
       </View>
       {plantItems}
-      <TouchableOpacity onPress={onPressAddPLant} style={styles.button}>
+      <TouchableOpacity onPress={onPressAddPlant} style={styles.button}>
         <Text style={styles.buttonLabel}>Add Plant</Text>
       </TouchableOpacity>
     </View>
@@ -40,7 +45,7 @@ function PlantItem({ data, onItemPress }) {
       <View style={styles.row}>
         <Cell text={data.name} />
         <Cell text={data.species} labelStyle={styles.speciesLabel} />
-        <Cell text={data.time} />
+        <Cell text={data.days} />
       </View>
     </TouchableOpacity>
   );

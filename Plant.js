@@ -2,10 +2,15 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import * as React from "react";
 import { Modal, Alert } from "react-native";
 
-function Plant({ navigation, route, removePlant }) {
+import { DBContext } from "./DbProvider.js";
+
+function Plant({ navigation, route }) {
+  const dbContext = React.useContext(DBContext);
+  const { deletePlant: removePlant } = dbContext;
+
   const { plant } = route.params;
   const deletePlant = React.useCallback(() => {
-    removePlant(plant.name);
+    removePlant(plant.id);
     navigation.goBack();
   }, [removePlant, navigation, plant]);
 
@@ -20,7 +25,7 @@ function Plant({ navigation, route, removePlant }) {
     <View style={styles.container}>
       <Text>Name: {plant?.name}</Text>
       <Text>Sepecies: {plant?.species}</Text>
-      <Text>Water every: {plant?.time} days</Text>
+      <Text>Water every: {plant?.days} days</Text>
 
       <TouchableOpacity style={styles.deleteButton} onPress={onPressDelete}>
         <Text>DELETE PLANT</Text>

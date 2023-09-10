@@ -4,13 +4,16 @@ import * as SQLite from "expo-sqlite";
 const DBContext = React.createContext();
 
 function DBProvider({ children }) {
-  const [db, setDb] = useState(SQLite.openDatabase("example.db"));
-  const [plants, setPlants] = useState([]);
+  const [db, setDb] = React.useState(SQLite.openDatabase("example.db"));
+  const [plants, setPlants] = React.useState([]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     db.transaction((tx) => {
       tx.executeSql(
         "CREATE TABLE IF NOT EXISTS plants (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, species TEXT, days INTEGER)",
+        null,
+        () => console.log("success!"),
+        (txObj, error) => console.log(error),
       );
     });
 
@@ -25,40 +28,48 @@ function DBProvider({ children }) {
   }, [db]);
 
   const addPlant = React.useCallback(
-    (name, species, days) => {
+    ({ name, species, days }) => {
       db.transaction((tx) => {
         tx.executeSql(
           "INSERT INTO plants (name, species, days) values (?, ?, ?)",
           [name, species, days],
           (txObj, resultSet) => {
             let existingPlants = [...plants];
-            existingPlants.push({ id: resultSet.insertId, name });
+            existingPlants.push({
+              id: resultSet.insertId,
+              name,
+              species,
+              days,
+            });
             setPlants(existingPlants);
           },
           (txObj, error) => console.log(error),
         );
       });
     },
-    [currentID, setCurrentID],
+    [plants],
   );
 
-  const deletePlant = React.useCallback((id) => {
-    db.transaction((tx) => {
-      tx.executeSql(
-        "DELETE FROM plants WHERE id = ?",
-        [id],
-        (txObj, resultSet) => {
-          if (resultSet.rowsAffected > 0) {
-            let existingPlants = [...plants].filter(
-              (plants) => plant.id !== id,
-            );
-            setPlants(existingPlants);
-          }
-        },
-        (txObj, error) => console.log(error),
-      );
-    });
-  }, []);
+  const deletePlant = React.useCallback(
+    (id) => {
+      db.transaction((tx) => {
+        tx.executeSql(
+          "DELETE FROM plants WHERE id = ?",
+          [id],
+          (txObj, resultSet) => {
+            if (resultSet.rowsAffected > 0) {
+              let existingPlants = [...plants].filter(
+                (plant) => plant.id !== id,
+              );
+              setPlants(existingPlants);
+            }
+          },
+          (txObj, error) => console.log(error),
+        );
+      });
+    },
+    [plants],
+  );
 
   const value = {
     plants,
@@ -69,4 +80,4 @@ function DBProvider({ children }) {
   return <DBContext.Provider value={value}>{children}</DBContext.Provider>;
 }
 
-export { DBProvider };
+export { DBProvider, DBContext };
