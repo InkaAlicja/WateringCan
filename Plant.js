@@ -11,10 +11,7 @@ function Plant({ navigation, route, removePlant }) {
 
   const onPressDelete = React.useCallback(() => {
     Alert.alert("R u sure?", `U sure u wanna delete ${plant.name}?`, [
-      {
-        text: "NO",
-        style: "cancel",
-      },
+      { text: "NO", style: "cancel" },
       { text: "YES", onPress: deletePlant },
     ]);
   });

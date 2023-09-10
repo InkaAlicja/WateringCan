@@ -1,0 +1,11 @@
+{
+  "arrowParens": "always",
+  "bracketSpacing": true,
+  "embeddedLanguageFormatting": "auto",
+  "jsxBracketSameLine": false,
+  "quoteProps": "consistent",
+  "semi": true,
+  "trailingComma": "all",
+  "tabWidth": 2,
+  "rangeStart": 0
+}

@@ -21,7 +21,7 @@ function AddPlant({ navigation, addPlant }) {
         time: plant.time,
       }));
     },
-    [setPlant]
+    [setPlant],
   );
 
   const onChangeSpeciesInputText = React.useCallback(
@@ -32,7 +32,7 @@ function AddPlant({ navigation, addPlant }) {
         time: plant.time,
       }));
     },
-    [setPlant]
+    [setPlant],
   );
 
   const onChangeDaysInputText = React.useCallback(
@@ -49,7 +49,7 @@ function AddPlant({ navigation, addPlant }) {
         time: days,
       }));
     },
-    [setPlant]
+    [setPlant],
   );
 
   const onCancel = React.useCallback(() => navigation.goBack(), [navigation]);
@@ -64,7 +64,7 @@ function AddPlant({ navigation, addPlant }) {
             text: "OK",
             style: "cancel",
           },
-        ]
+        ],
       );
       return;
     }

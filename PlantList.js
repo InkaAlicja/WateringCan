@@ -8,7 +8,7 @@ function PlantList({ navigation, plants }) {
         plant: plant,
       });
     },
-    [navigation]
+    [navigation],
   );
 
   const plantItems = plants.map((item, i) => (

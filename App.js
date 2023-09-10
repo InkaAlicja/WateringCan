@@ -27,14 +27,14 @@ function App() {
     (plant) => {
       setPlants((plants) => plants.concat([plant]));
     },
-    [setPlants]
+    [setPlants],
   );
 
   const removePlant = React.useCallback(
     (name) => {
       setPlants((plants) => plants.filter((plant) => plant.name !== name));
     },
-    [setPlants]
+    [setPlants],
   );
 
   return (
